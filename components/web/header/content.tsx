@@ -2,11 +2,11 @@ import Link from "next/link";
 
 import { DesktopNav } from "./desktop-nav";
 import { MobileNav } from "./mobile-nav";
-import { HeaderCart } from "./cart";
-import { HeaderWishlist } from "./wishlist";
+import { HeaderCartSheet } from "./header-cart-sheet";
+import { HeaderWishlistSheet } from "./header-wishlist-sheet";
 import { getCategories, getCollections } from "@/lib/queries";
 import { Suspense } from "react";
-import { HeaderUser } from "./user";
+import { HeaderUserSheet } from "./header-user-sheet";
 
 export async function HeaderContent() {
   const categories = await getCategories();
@@ -27,9 +27,9 @@ export async function HeaderContent() {
       </div>
       <Suspense>
         <div className="flex items-center justify-end gap-2">
-          <HeaderUser />
-          <HeaderWishlist />
-          <HeaderCart />
+          <HeaderUserSheet />
+          <HeaderWishlistSheet />
+          <HeaderCartSheet />
         </div>
       </Suspense>
     </div>

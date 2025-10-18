@@ -12,16 +12,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2, Eye } from "lucide-react";
 import Link from "next/link";
-import { deletePage } from "@/lib/cms-actions";
+import { deleteContentPage } from "@/lib/content-actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { TPage, TPageSection } from "@/db/schema";
+import { TContentPage } from "@/db/schema";
 
-type PagesTableProps = {
-  pages: (TPage & { sections: TPageSection[] })[];
+type ContentPagesTableProps = {
+  pages: TContentPage[];
 };
 
-export function PagesTable({ pages }: PagesTableProps) {
+export function ContentPagesTable({ pages }: ContentPagesTableProps) {
   const router = useRouter();
 
   const handleDelete = async (id: string, slug: string) => {
@@ -30,7 +30,7 @@ export function PagesTable({ pages }: PagesTableProps) {
     }
 
     try {
-      await deletePage({ id });
+      await deleteContentPage({ id });
       toast.success("Page deleted successfully");
       router.refresh();
     } catch {
@@ -45,9 +45,8 @@ export function PagesTable({ pages }: PagesTableProps) {
           <TableRow>
             <TableHead>Title</TableHead>
             <TableHead>Slug</TableHead>
-            <TableHead>Type</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Sections</TableHead>
+            <TableHead>Blocks</TableHead>
             <TableHead>Updated</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -55,7 +54,7 @@ export function PagesTable({ pages }: PagesTableProps) {
         <TableBody>
           {pages.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-8">
+              <TableCell colSpan={6} className="text-center py-8">
                 No pages found. Create your first page to get started.
               </TableCell>
             </TableRow>
@@ -64,9 +63,6 @@ export function PagesTable({ pages }: PagesTableProps) {
               <TableRow key={page.id}>
                 <TableCell className="font-medium">{page.title}</TableCell>
                 <TableCell className="font-mono text-sm">{page.slug}</TableCell>
-                <TableCell>
-                  <Badge variant="outline">{page.type}</Badge>
-                </TableCell>
                 <TableCell>
                   <Badge
                     variant={
@@ -80,7 +76,9 @@ export function PagesTable({ pages }: PagesTableProps) {
                     {page.status}
                   </Badge>
                 </TableCell>
-                <TableCell>{page.sections?.length || 0}</TableCell>
+                <TableCell>
+                  {Array.isArray(page.content) ? page.content.length : 0}
+                </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
                   {new Date(
                     page.updatedAt || page.createdAt
@@ -93,7 +91,7 @@ export function PagesTable({ pages }: PagesTableProps) {
                         <Eye className="h-4 w-4" />
                       </Button>
                     </Link>
-                    <Link href={`/admin/store/pages/${page.id}`}>
+                    <Link href={`/admin/store/${page.id}`}>
                       <Button variant="ghost" size="icon">
                         <Edit className="h-4 w-4" />
                       </Button>

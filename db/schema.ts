@@ -483,16 +483,16 @@ export const productSlugRedirectsRelations = relations(
   })
 );
 
-// —— CMS PAGES ——
-export const pages = pgTable(
-  "pages",
+// —— CONTENT PAGES (New Sanity-inspired CMS) ——
+export const contentPages = pgTable(
+  "content_pages",
   {
     id: uuid().primaryKey().defaultRandom(),
     title: text().notNull(),
     slug: text().notNull().unique(),
     description: text(),
     status: text().notNull().default("draft"), // draft, published, archived
-    type: text().notNull().default("page"), // page, homepage, custom
+    content: jsonb().$type<ContentBlock[]>(), // Structured block content
     seoTitle: text(),
     seoDescription: text(),
     seoKeywords: text(),
@@ -500,43 +500,16 @@ export const pages = pgTable(
     ...timestamps,
   },
   (t) => [
-    uniqueIndex("pages_slug_idx").on(t.slug),
-    index("pages_status_idx").on(t.status),
-    index("pages_type_idx").on(t.type),
+    uniqueIndex("content_pages_slug_idx").on(t.slug),
+    index("content_pages_status_idx").on(t.status),
   ]
 );
 
-// —— PAGE SECTIONS ——
-export const pageSections = pgTable(
-  "page_sections",
-  {
-    id: uuid().primaryKey().defaultRandom(),
-    pageId: uuid()
-      .notNull()
-      .references(() => pages.id, { onDelete: "cascade" }),
-    title: text(),
-    type: text().notNull(), // hero, text, image_text, gallery, cta, features, custom
-    content: jsonb(), // Flexible JSON content for different section types
-    order: integer().notNull().default(0),
-    isVisible: boolean().notNull().default(true),
-    ...timestamps,
-  },
-  (t) => [
-    index("page_sections_page_id_idx").on(t.pageId),
-    index("page_sections_order_idx").on(t.order),
-  ]
-);
+export type ContentBlock = {
+  id: string;
+  type: 'header' | 'section' | 'grid' | 'text' | 'cta' | 'custom';
+  data: Record<string, unknown>;
+  children?: ContentBlock[];
+};
 
-export const pagesRelations = relations(pages, ({ many }) => ({
-  sections: many(pageSections),
-}));
-
-export const pageSectionsRelations = relations(pageSections, ({ one }) => ({
-  page: one(pages, {
-    fields: [pageSections.pageId],
-    references: [pages.id],
-  }),
-}));
-
-export type TPage = typeof pages.$inferSelect;
-export type TPageSection = typeof pageSections.$inferSelect;
+export type TContentPage = typeof contentPages.$inferSelect;
