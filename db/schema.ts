@@ -198,6 +198,14 @@ export const products = pgTable(
   ]
 );
 
+// —— IMAGES ——
+export const images = pgTable("images", {
+  id: uuid().primaryKey().defaultRandom(),
+  url: text().notNull(),
+  filename: text().notNull(),
+  ...timestamps,
+});
+
 // —— CATEGORIES ——
 export const categories = pgTable(
   "categories",
@@ -381,6 +389,7 @@ export type TSession = typeof sessions.$inferSelect;
 export type TAccount = typeof accounts.$inferSelect;
 export type TVerification = typeof verifications.$inferSelect;
 export type TProduct = typeof products.$inferSelect;
+export type TImage = typeof images.$inferSelect;
 export type TCategory = typeof categories.$inferSelect;
 export type TCollection = typeof collections.$inferSelect;
 export type TWishlist = z.infer<typeof wishlistSchema>;
