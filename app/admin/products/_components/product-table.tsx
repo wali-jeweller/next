@@ -22,17 +22,12 @@ const getCategories = async () => {
   return db.query.categories.findMany();
 };
 
-const getCollections = async () => {
-  "use cache";
-  return db.query.collections.findMany();
-};
 export type ProductsWithRelations = Awaited<ReturnType<typeof getProducts>>;
 
 export async function ProductTable() {
-  const [productsData, categoriesList, collectionsList] = await Promise.all([
+  const [productsData, categoriesList] = await Promise.all([
     getProducts(),
     getCategories(),
-    getCollections(),
   ]);
 
   const filters: FilterConfig[] = [
@@ -44,17 +39,6 @@ export async function ProductTable() {
         ...categoriesList.map((category) => ({
           label: category.title,
           value: category.id,
-        })),
-      ],
-    },
-    {
-      columnKey: "collections",
-      title: "Collections",
-      options: [
-        { label: "No Collections", value: "none" },
-        ...collectionsList.map((collection) => ({
-          label: collection.title,
-          value: collection.id,
         })),
       ],
     },

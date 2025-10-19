@@ -62,44 +62,6 @@ export const columns: ColumnDef<ProductsWithRelations[number]>[] = [
     },
   },
   {
-    accessorKey: "collections",
-    header: "Collections",
-    cell: ({ row }) => {
-      const collections =
-        row.original.collectionProducts
-          ?.map((x) => x.collection)
-          .filter(Boolean) || [];
-
-      return (
-        <div className="flex flex-wrap gap-1">
-          {collections.map((c) => (
-            <Badge key={c?.id} variant="outline" className="text-xs">
-              {c?.title}
-            </Badge>
-          ))}
-          {collections.length > 2 && (
-            <Badge variant="outline" className="text-xs">
-              +{collections.length - 2}
-            </Badge>
-          )}
-        </div>
-      );
-    },
-    filterFn: (row, _columnId, value) => {
-      const filterValues = Array.isArray(value) ? value : [value];
-      const collections =
-        row.original.collectionProducts
-          ?.map((x) => x.collection)
-          .filter(Boolean) || [];
-
-      if (collections.length === 0) {
-        return filterValues.includes("none");
-      }
-
-      return collections.some((c) => c && filterValues.includes(c.id));
-    },
-  },
-  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => <StatusBadge status={row.original.status} />,

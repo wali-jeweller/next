@@ -1,7 +1,6 @@
 "use client";
 
-import { Edit2, MoreHorizontal, Trash2, View } from "lucide-react";
-import Link from "next/link";
+import { MoreHorizontal, Trash2 } from "lucide-react";
 import React from "react";
 import {
   AlertDialog,
@@ -22,11 +21,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { TProduct } from "@/db/schema";
-import { UpdateProductDetails } from "../[slug]/_components/update-details";
 import { deleteProductAction } from "../actions";
 
 export function TableActions({ product }: { product: TProduct }) {
-  const [open, setOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
 
@@ -46,20 +43,7 @@ export function TableActions({ product }: { product: TProduct }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>
-            <Link
-              href={`/products/${product.slug}`}
-              className="flex items-center gap-2"
-            >
-              <View />
-              View Details
-            </Link>
-          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Edit2 />
-            Edit product
-          </DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"
             onClick={() => setDeleteOpen(true)}
@@ -69,7 +53,6 @@ export function TableActions({ product }: { product: TProduct }) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <UpdateProductDetails product={product} open={open} setOpen={setOpen} />
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

@@ -73,8 +73,10 @@ export const updateProductMetaDataAction = protectedAction(
         .where(eq(products.id, id))
         .returning();
       revalidatePath(`/products/${product?.slug}`);
+      return { success: "Metadata updated" };
     } catch (errors) {
       console.error(errors);
+      return { error: "Failed to update metadata" };
     }
   }
 );
@@ -373,7 +375,7 @@ export const updateProductPriceAction = protectedAction(
         data.weight &&
         data.weight > 0
       ) {
-        const ratePerGram = await db.query.dailyGoldRates.findFirst({
+        const ratePerGram = await db.query.dailyMaterial.findFirst({
           orderBy: (dgr, { desc }) => desc(dgr.createdAt),
         });
         if (ratePerGram) {
