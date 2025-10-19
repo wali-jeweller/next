@@ -63,6 +63,7 @@ import {
 import { Upload } from "lucide-react";
 import {
   Empty,
+  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
@@ -503,6 +504,9 @@ export function ProductForm({ product, categories }: ProductFormProps) {
                     Upload images to showcase your product.
                   </EmptyDescription>
                 </EmptyHeader>
+                <EmptyContent>
+                  <Button type="button">Upload Images</Button>
+                </EmptyContent>
               </Empty>
             </CardContent>
           </Card>

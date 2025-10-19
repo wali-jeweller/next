@@ -17,7 +17,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { TProduct } from "@/db/schema";
@@ -43,7 +42,6 @@ export function TableActions({ product }: { product: TProduct }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"
             onClick={() => setDeleteOpen(true)}
