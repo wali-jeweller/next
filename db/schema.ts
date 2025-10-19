@@ -170,6 +170,12 @@ export const products = pgTable(
         rank: number;
       }[]
     >(),
+    sizes: jsonb().$type<
+      Array<{
+        unit: string;
+        value: string;
+      }>
+    >(),
     attributes: jsonb().$type<
       {
         name: string;
