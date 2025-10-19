@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { db } from "@repo/db";
+import { db } from "@/db";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Ruler, Plus } from "lucide-react";

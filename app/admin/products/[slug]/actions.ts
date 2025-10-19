@@ -1,14 +1,14 @@
 "use server";
 
 import { and, eq } from "drizzle-orm";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { db } from "@repo/db";
+import { db } from "@/db";
 import {
   collectionProducts,
   productSlugRedirects,
   products,
-} from "@repo/db/schema";
+} from "@/db/schema";
 import { protectedAction } from "@/lib/protected-action";
 import { updateProductSchema } from "../types";
 import { attributesSchema, metadataSchema } from "./types";
@@ -72,7 +72,6 @@ export const updateProductMetaDataAction = protectedAction(
         .set({ metadata: { title, description } })
         .where(eq(products.id, id))
         .returning();
-      revalidateTag(`product-${id}`);
       revalidatePath(`/products/${product?.slug}`);
     } catch (errors) {
       console.error(errors);
@@ -119,7 +118,6 @@ export const assignToCollectionAction = protectedAction(
         collectionId,
       });
 
-      revalidateTag(`product-${productId}`);
       revalidatePath(`/products/${product.slug}`);
       revalidatePath(`/products`);
       return { success: "Assigned to collection" };
@@ -155,7 +153,6 @@ export const removeFromCollectionAction = protectedAction(
           )
         );
 
-      revalidateTag(`product-${productId}`);
       revalidatePath(`/products/${product.slug}`);
       revalidatePath(`/products`);
       return { success: "Removed from collection" };
@@ -190,7 +187,6 @@ export const assignToCategoryAction = protectedAction(
         .where(eq(products.id, productId))
         .returning();
 
-      revalidateTag(`product-${productId}`);
       revalidatePath(`/products/${product?.slug}`);
     } catch (errors) {
       console.error(errors);
@@ -226,8 +222,6 @@ export const createProductAttributeAction = protectedAction(
         .update(products)
         .set({ attributes: updatedAttributes })
         .where(eq(products.id, productId));
-
-      revalidateTag(`product-${productId}`);
     } catch (errors) {
       console.error(errors);
       return { error: "Failed to create attribute" };
@@ -265,8 +259,6 @@ export const updateProductAttributeAction = protectedAction(
         .update(products)
         .set({ attributes: updatedAttributes })
         .where(eq(products.id, productId));
-
-      revalidateTag(`product-${productId}`);
     } catch (errors) {
       console.error(errors);
       return { error: "Failed to update attribute" };
@@ -305,8 +297,6 @@ export const deleteProductAttributeAction = protectedAction(
         .update(products)
         .set({ attributes: updatedAttributes })
         .where(eq(products.id, productId));
-
-      revalidateTag(`product-${productId}`);
     } catch (errors) {
       console.error(errors);
       return { error: "Failed to delete attribute" };
@@ -336,8 +326,6 @@ export const updateProductAttributesOrderAction = protectedAction(
           })),
         })
         .where(eq(products.id, productId));
-
-      revalidateTag(`product-${productId}`);
     } catch (error) {
       console.error(error);
       return { error: "Failed to update attribute order" };
@@ -399,7 +387,6 @@ export const updateProductPriceAction = protectedAction(
         .update(products)
         .set(updateData)
         .where(eq(products.id, data.productId));
-      revalidateTag(`product-${data.productId}`);
     } catch (error) {
       console.error(error);
       return { error: "Failed to update product price" };
@@ -420,8 +407,6 @@ export const updateProductMaterialAction = protectedAction(
           material: data.material,
         })
         .where(eq(products.id, data.productId));
-
-      revalidateTag(`product-${data.productId}`);
     } catch (error) {
       console.error(error);
       return { error: "Failed to update product material" };
@@ -442,8 +427,6 @@ export const updateProductGenderAction = protectedAction(
           gender: data.gender,
         })
         .where(eq(products.id, data.productId));
-
-      revalidateTag(`product-${data.productId}`);
     } catch (error) {
       console.error(error);
       return { error: "Failed to update product gender" };
@@ -477,7 +460,6 @@ export const deleteProductImageAction = protectedAction(
           .set({ images: [] })
           .where(eq(products.id, productId));
       }
-      revalidateTag(`product-${productId}`);
       return { success: true };
     } catch (error) {
       console.error(error);
@@ -504,8 +486,6 @@ export const updateProductImageOrderAction = protectedAction(
         .update(products)
         .set({ images: imageList })
         .where(eq(products.id, productId));
-
-      revalidateTag(`product-${productId}`);
     } catch (error) {
       console.error(error);
       return { error: "Failed to update images order" };

@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { collectionProducts } from "@/db/schema";
-import { unstable_cacheTag as cacheTag } from "next/cache";
+import { cacheTag } from "next/cache";
 
 export const getCollection = async (slug: string) => {
   "use cache";

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { visibilityEnum, productStatusEnum } from "@repo/db/schema";
+import { visibilityEnum, productStatusEnum } from "@/db/schema";
 
 export const productSchema = z.object({
   title: z.string().min(3).max(150),

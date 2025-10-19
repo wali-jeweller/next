@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
-import { db } from "@repo/db";
+import { db } from "@/db";
 import { SizesSidebar } from "./_components/sizes-sidebar";
 import type { Metadata } from "next";
+import { auth } from "@/lib/auth";
 
 const getAllCategoriesWithSizes = async () => {
   const categories = await db.query.categories.findMany({
@@ -24,9 +24,9 @@ export default async function SizesLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { userId, redirectToSignIn } = await auth();
+  const { user, redirectToSignIn } = await auth();
 
-  if (!userId) redirectToSignIn();
+  if (!user) redirectToSignIn();
 
   const categoriesWithSizes = await getAllCategoriesWithSizes();
 

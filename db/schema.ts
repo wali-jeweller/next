@@ -124,7 +124,13 @@ export const productStatusEnum = [
 ] as const;
 
 export const visibilityEnum = ["public", "private"] as const;
-export const materialEnum = ["gold", "silver", "platinum", "other"] as const;
+export const materialEnum = [
+  "gold",
+  "silver",
+  "platinum",
+  "pladium",
+  "other",
+] as const;
 export const genderEnum = ["male", "female", "unisex"] as const;
 export const cartStatusEnum = [
   "active",
@@ -237,78 +243,62 @@ export const collectionProducts = pgTable(
 );
 
 // —— WISHLISTS ——
-export const wishlists = pgTable(
-  "wishlists",
-  {
-    id: uuid().primaryKey().defaultRandom(),
-    userId: uuid()
-      .notNull()
-      .references(() => users.id),
-    items: jsonb().$type<Array<z.infer<typeof productSchema>>>(),
-    ...timestamps,
-  },
-  (t) => [index("wishlists_user_id_idx").on(t.userId)]
-);
+export const wishlists = pgTable("wishlists", {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: uuid()
+    .notNull()
+    .references(() => users.id),
+  items: jsonb().$type<Array<z.infer<typeof productSchema>>>(),
+  ...timestamps,
+});
 
 // —— CARTS ——
-export const carts = pgTable(
-  "carts",
-  {
-    id: uuid().primaryKey().defaultRandom(),
-    userId: uuid()
-      .notNull()
-      .references(() => users.id),
-    status: text({ enum: cartStatusEnum }).default("active"),
-    items: jsonb().$type<Array<z.infer<typeof productSchema>>>(),
-    ...timestamps,
-  },
-  (t) => [index("carts_user_id_idx").on(t.userId)]
-);
+export const carts = pgTable("carts", {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: uuid()
+    .notNull()
+    .references(() => users.id),
+  status: text({ enum: cartStatusEnum }).default("active"),
+  items: jsonb().$type<Array<z.infer<typeof productSchema>>>(),
+  ...timestamps,
+});
 
 // —— ORDERS ——
-export const orders = pgTable(
-  "orders",
-  {
-    id: uuid().primaryKey().defaultRandom(),
-    userId: uuid()
-      .notNull()
-      .references(() => users.id),
-    status: text({ enum: orderStatusEnum }).default("pending"),
-    items: jsonb().$type<Array<z.infer<typeof productSchema>>>(),
-    total: integer().notNull(),
-    shipping: integer().default(0),
-    tax: integer().default(0),
-    discount: integer().default(0),
-    subtotal: integer().notNull(),
-    address: jsonb().$type<{
-      name: string;
-      address: string;
-      city: string;
-      state: string;
-      zip: string;
-    }>(),
-    ...timestamps,
-  },
-  (t) => [index("orders_user_id_idx").on(t.userId)]
-);
+export const orders = pgTable("orders", {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: uuid()
+    .notNull()
+    .references(() => users.id),
+  status: text({ enum: orderStatusEnum }).default("pending"),
+  items: jsonb().$type<Array<z.infer<typeof productSchema>>>(),
+  total: integer().notNull(),
+  shipping: integer().default(0),
+  tax: integer().default(0),
+  discount: integer().default(0),
+  subtotal: integer().notNull(),
+  address: jsonb().$type<{
+    name: string;
+    address: string;
+    city: string;
+    state: string;
+    zip: string;
+  }>(),
+  ...timestamps,
+});
 
 // —— PROMOTIONS ——
-export const promotions = pgTable(
-  "promotions",
-  {
-    id: uuid().primaryKey().defaultRandom(),
-    title: text().notNull(),
-    description: text(),
-    type: text({ enum: ["amount", "percentage"] }).default("amount"),
-    appliesTo: jsonb().$type<{
-      productId?: string;
-      categoryId?: string;
-      collectionId?: string;
-    }>(),
-    ...timestamps,
-  },
-  (t) => [index("promotions_id_idx").on(t.id)]
-);
+export const promotions = pgTable("promotions", {
+  id: uuid().primaryKey().defaultRandom(),
+  title: text().notNull(),
+  description: text(),
+  type: text({ enum: ["amount", "percentage"] }).default("amount"),
+  appliesTo: jsonb().$type<{
+    productId?: string;
+    categoryId?: string;
+    collectionId?: string;
+  }>(),
+  ...timestamps,
+});
 
 // —— PRODUCT SLUG REDIRECTS ——
 export const productSlugRedirects = pgTable(
@@ -322,7 +312,6 @@ export const productSlugRedirects = pgTable(
     ...timestamps,
   },
   (t) => [
-    index("product_slug_redirects_id_idx").on(t.id),
     uniqueIndex("product_slug_redirects_old_slug_idx").on(t.oldSlug),
     index("product_slug_redirects_product_id_idx").on(t.productId),
   ]
@@ -347,34 +336,21 @@ export const blogPosts = pgTable(
     ...timestamps,
   },
   (t) => [
-    index("blog_posts_id_idx").on(t.id),
     uniqueIndex("blog_posts_slug_idx").on(t.slug),
     index("blog_posts_status_idx").on(t.status),
-    index("blog_posts_published_at_idx").on(t.publishedAt),
   ]
 );
 
-export const storePages = pgTable("store_pages", {
+// —— DAILY GOLD RATES ——
+export const dailyMaterial = pgTable("daily_material_rates", {
   id: uuid().primaryKey().defaultRandom(),
-  title: text().notNull(),
-  metadata: jsonb(),
-  content: jsonb(),
+  material: text({ enum: materialEnum }),
+  ratePerGram: integer().notNull(),
+  date: text()
+    .notNull()
+    .default(sql`CURRENT_DATE`),
   ...timestamps,
 });
-
-// —— DAILY GOLD RATES ——
-export const dailyGoldRates = pgTable(
-  "daily_gold_rates",
-  {
-    id: uuid().primaryKey().defaultRandom(),
-    ratePerGram: integer().notNull(),
-    date: text()
-      .notNull()
-      .default(sql`CURRENT_DATE`),
-    ...timestamps,
-  },
-  (t) => [index("daily_gold_rates_id_idx").on(t.id)]
-);
 
 // —— RELATIONS ——
 
@@ -405,7 +381,7 @@ export type TWishlist = z.infer<typeof wishlistSchema>;
 export type TCart = z.infer<typeof cartSchema>;
 export type TOrder = typeof orders.$inferSelect;
 export type TPromotion = typeof promotions.$inferSelect;
-export type TDailyGoldRate = typeof dailyGoldRates.$inferSelect;
+export type TDailMaterialPrices = typeof dailyMaterial.$inferSelect;
 export type TProductSlugRedirect = typeof productSlugRedirects.$inferSelect;
 export type TBlogPost = typeof blogPosts.$inferSelect;
 
@@ -482,34 +458,3 @@ export const productSlugRedirectsRelations = relations(
     }),
   })
 );
-
-// —— CONTENT PAGES (New Sanity-inspired CMS) ——
-export const contentPages = pgTable(
-  "content_pages",
-  {
-    id: uuid().primaryKey().defaultRandom(),
-    title: text().notNull(),
-    slug: text().notNull().unique(),
-    description: text(),
-    status: text().notNull().default("draft"), // draft, published, archived
-    content: jsonb().$type<ContentBlock[]>(), // Structured block content
-    seoTitle: text(),
-    seoDescription: text(),
-    seoKeywords: text(),
-    ogImage: text(),
-    ...timestamps,
-  },
-  (t) => [
-    uniqueIndex("content_pages_slug_idx").on(t.slug),
-    index("content_pages_status_idx").on(t.status),
-  ]
-);
-
-export type ContentBlock = {
-  id: string;
-  type: 'header' | 'section' | 'grid' | 'text' | 'cta' | 'custom';
-  data: Record<string, unknown>;
-  children?: ContentBlock[];
-};
-
-export type TContentPage = typeof contentPages.$inferSelect;

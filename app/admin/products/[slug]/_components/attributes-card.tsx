@@ -18,7 +18,7 @@ import {
   SortableItem,
   SortableItemHandle,
 } from "@/components/ui/sortable";
-import type { TProduct } from "@repo/db/schema";
+import type { TProduct } from "@/db/schema";
 import { updateProductAttributesOrderAction } from "../actions";
 import { AttributesAction } from "./attributes-action";
 import { CreateAttribute } from "./create-attribute";

@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { TCategory } from "@repo/db/schema";
-import { CreateSizeButton } from "@/components/size-form";
+import type { TCategory } from "@/db/schema";
+import { CreateSizeButton } from "@/components/web";
 import { Ruler } from "lucide-react";
 
 interface SizesSidebarProps {

@@ -3,8 +3,8 @@
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { db } from "@repo/db";
-import { categories } from "@repo/db/schema";
+import { db } from "@/db";
+import { categories } from "@/db/schema";
 import { protectedAction } from "@/lib/protected-action";
 import { createSizeSchema, editSizeSchema } from "./types";
 

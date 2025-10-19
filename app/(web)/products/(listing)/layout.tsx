@@ -22,7 +22,9 @@ export default function ProductsListingLayout({
           <Suspense fallback={<FiltersSkeleton />}>
             <FiltersServer />
           </Suspense>
-          <Sort />
+          <Suspense>
+            <Sort />
+          </Suspense>
         </div>
       </div>
       {children}

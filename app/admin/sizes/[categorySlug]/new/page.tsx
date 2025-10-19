@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { db } from "@repo/db";
+import { db } from "@/db";
 import { SizeForm } from "@/components/size-form";
 
 const getCategoryData = async (slug: string) => {

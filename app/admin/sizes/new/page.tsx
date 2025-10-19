@@ -1,4 +1,4 @@
-import { db } from "@repo/db";
+import { db } from "@/db";
 import { redirect } from "next/navigation";
 
 const getAllCategories = async () => {

@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
-import { db } from "@repo/db";
+import { db } from "@/db";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 const getFirstCategoryWithSizes = async () => {
@@ -15,9 +15,9 @@ const getFirstCategoryWithSizes = async () => {
 };
 
 export default async function Page() {
-  const { userId, redirectToSignIn } = await auth();
+  const { user, redirectToSignIn } = await auth();
 
-  if (!userId) redirectToSignIn();
+  if (!user) redirectToSignIn();
 
   const firstCategoryWithSizes = await getFirstCategoryWithSizes();
 

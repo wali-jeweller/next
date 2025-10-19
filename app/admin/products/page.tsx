@@ -1,10 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
 import { ProductTable } from "./_components/product-table";
 
 export default async function Page() {
-  const { userId, redirectToSignIn } = await auth();
+  const { user, redirectToSignIn } = await auth();
 
-  if (!userId) redirectToSignIn();
+  if (!user) redirectToSignIn();
 
   return (
     <div className="space-y-4 p-4">

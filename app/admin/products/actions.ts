@@ -4,11 +4,10 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { db } from "@repo/db";
-import { products } from "@repo/db/schema";
+import { db } from "@/db";
 import { protectedAction } from "@/lib/protected-action";
-import { addRetryJob } from "@/lib/retry-queue";
 import { productSchema } from "./types";
+import { products } from "@/db/schema";
 
 export const createProductAction = protectedAction(
   productSchema,
@@ -160,19 +159,6 @@ export const updateProductImagesAction = protectedAction(
       return { success: "Product images updated successfully" };
     } catch (error) {
       console.error("Database update failed:", error);
-
-      // Add to retry queue for later processing
-      try {
-        await addRetryJob("updateProductImages", { productId, imageUrls });
-        return {
-          success:
-            "Images uploaded successfully. Database update queued for retry.",
-          queued: true,
-        };
-      } catch (queueError) {
-        console.error("Failed to add retry job:", queueError);
-        return { error: "Failed to update product images" };
-      }
     }
   }
 );

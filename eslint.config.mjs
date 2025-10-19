@@ -23,6 +23,7 @@ const eslintConfig = [
   {
     rules: {
       "react/no-unescaped-entities": "off",
+      "react/no-children-prop": "off"
     },
   },
 ];

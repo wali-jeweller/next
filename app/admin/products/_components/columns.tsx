@@ -29,7 +29,7 @@ export const columns: ColumnDef<ProductsWithRelations[number]>[] = [
     header: "Title",
     cell: ({ row }) => (
       <Button variant={"link"} asChild>
-        <Link href={`/products/${row.original.slug}`} prefetch={false}>
+        <Link href={`/admin/products/${row.original.slug}`} prefetch={false}>
           {row.original.title}
         </Link>
       </Button>
