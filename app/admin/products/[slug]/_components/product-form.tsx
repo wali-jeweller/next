@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import * as React from "react";
@@ -44,7 +45,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import type { TCategory, TProduct } from "@/db/schema";
+import type { TCategory, TProduct, TImage } from "@/db/schema";
 import {
   productStatusEnum,
   visibilityEnum,
@@ -53,6 +54,7 @@ import {
 } from "@/db/schema";
 
 import { updateProductAction } from "../actions";
+import { ImageLibrarySheet } from "@/components/admin/image-library-sheet";
 import {
   InputGroup,
   InputGroupAddon,
@@ -217,7 +219,19 @@ export function ProductForm({ product, categories }: ProductFormProps) {
   const [isSaving, setIsSaving] = React.useState(false);
   const [showUnsavedDialog, setShowUnsavedDialog] = React.useState(false);
 
+  // Product images - Drizzle already deserializes JSONB
+  // Cast to TImage[] since we're now using the new images table structure
+  const [productImages, setProductImages] = React.useState<TImage[]>(
+    (product.images as unknown as TImage[]) || []
+  );
+
   const metadata = (product.metadata as Record<string, string>) || {};
+
+  // Handle image selection from library
+  const handleImageSelect = (images: TImage[]) => {
+    setProductImages(images);
+    // Mark form as dirty when images change
+  };
 
   const form = useForm({
     defaultValues: {
@@ -267,6 +281,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
           slug: value.slug,
           visibility: value.visibility,
           status: value.status,
+          images: productImages,
         });
 
         if (result?.error) {
@@ -488,26 +503,56 @@ export function ProductForm({ product, categories }: ProductFormProps) {
                 Upload and manage product images
               </CardDescription>
               <CardAction>
-                <Button variant="outline" type="button" size="icon-sm">
-                  <Upload />
-                </Button>
+                <ImageLibrarySheet
+                  onSelect={handleImageSelect}
+                  selectedImages={productImages}
+                  multiSelect={true}
+                  trigger={
+                    <Button variant="outline" type="button" size={"icon-sm"}>
+                      <Upload className="size-4" />
+                    </Button>
+                  }
+                />
               </CardAction>
             </CardHeader>
-            <CardContent>
-              <Empty>
-                <EmptyHeader>
-                  <EmptyMedia variant={"icon"}>
-                    <Upload className="size-6" />
-                  </EmptyMedia>
-                  <EmptyTitle>No images uploaded</EmptyTitle>
-                  <EmptyDescription>
-                    Upload images to showcase your product.
-                  </EmptyDescription>
-                </EmptyHeader>
-                <EmptyContent>
-                  <Button type="button">Upload Images</Button>
-                </EmptyContent>
-              </Empty>
+            <CardContent className="space-y-4">
+              {/* Display currently assigned images */}
+              {productImages.length > 0 ? (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">
+                    Assigned Images ({productImages.length})
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {productImages.map((img) => (
+                      <div
+                        key={img.id}
+                        className="relative aspect-square rounded-lg overflow-hidden border"
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.filename}
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <Empty>
+                  <EmptyHeader>
+                    <EmptyMedia variant={"icon"}>
+                      <Upload className="size-6" />
+                    </EmptyMedia>
+                    <EmptyContent>
+                      <EmptyTitle>No images assigned</EmptyTitle>
+                      <EmptyDescription>
+                        Click the button above to select images from your
+                        library
+                      </EmptyDescription>
+                    </EmptyContent>
+                  </EmptyHeader>
+                </Empty>
+              )}
             </CardContent>
           </Card>
           {/* Pricing Card */}

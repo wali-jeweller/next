@@ -44,7 +44,11 @@ export const updateProductAction = protectedAction(
 
       const [product] = await db
         .update(products)
-        .set(data)
+        .set({
+          ...data,
+          // Type cast since we're migrating from old image format to new TImage format
+          images: data.images as unknown as typeof products.$inferInsert.images,
+        })
         .where(eq(products.id, data.id))
         .returning();
 

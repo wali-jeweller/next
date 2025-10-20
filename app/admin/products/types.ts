@@ -16,4 +16,15 @@ export const updateProductSchema = productSchema
   })
   .extend({
     id: z.string(),
+    images: z
+      .array(
+        z.object({
+          id: z.string(),
+          url: z.string(),
+          filename: z.string(),
+          createdAt: z.date().optional(),
+          updatedAt: z.date().nullable().optional(),
+        })
+      )
+      .optional(),
   });
