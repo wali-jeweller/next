@@ -2,16 +2,20 @@
 
 import type { Table } from "@tanstack/react-table";
 
-import { X } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import type { FilterConfig } from "./data-table";
 import {
   DataTableFacetedFilter,
   type Option,
 } from "./data-table-faceted-filter";
 import { DataTableViewOptions } from "./data-table-view-options";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -37,12 +41,17 @@ export function DataTableToolbar<TData>({
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-2">
-        <Input
-          placeholder="Search..."
-          value={globalFilter}
-          onChange={(event) => setGlobalFilter(event.target.value)}
-          className="h-8 w-[150px] lg:w-[250px]"
-        />
+        <InputGroup>
+          <InputGroupAddon>
+            <Search />
+          </InputGroupAddon>
+          <InputGroupInput
+            placeholder="Search..."
+            value={globalFilter}
+            onChange={(event) => setGlobalFilter(event.target.value)}
+            className="h-8 w-[150px] lg:w-[250px]"
+          />
+        </InputGroup>
         {filters?.map((filter) => {
           const column = table?.getColumn(filter.columnKey);
           return column ? (
