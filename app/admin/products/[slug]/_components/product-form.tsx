@@ -3,7 +3,12 @@
 
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
+import {
+  FormProvider,
+  useForm,
+  type DefaultValues,
+  type Resolver,
+} from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -27,7 +32,12 @@ import {
   visibilityEnum,
 } from "@/db/schema";
 import { updateProductAction } from "../actions";
-import { productFormSchema, type ProductFormValues } from "./types";
+import {
+  productFormSchema,
+  type ProductFormValues,
+  type MarketPricingFormValue,
+} from "./types";
+import { DUMMY_MARKETS } from "./pricing-data";
 import { BasicInformationSection } from "./basic-information-section";
 import { PricingSection } from "./pricing-section";
 import { ProductDetailsSection } from "./product-details-section";
@@ -118,25 +128,39 @@ export function ProductForm({ product, categories }: ProductFormProps) {
   const metadata =
     (product.metadata as Record<string, string | undefined>) || {};
 
-  const defaultValues: ProductFormValues = {
-    title: product.title ?? "",
-    description: product.description ?? null,
-    slug: product.slug ?? "",
-    visibility: product.visibility as (typeof visibilityEnum)[number],
-    status: product.status as (typeof productStatusEnum)[number],
-    price: product.price ?? 0,
-    categoryId: product.categoryId ?? "",
-    discountedPrice: product.discountedPrice ?? null,
-    makingCharges: product.makingCharges ?? null,
-    material: (product.material as (typeof materialEnum)[number]) ?? null,
-    weight: product.weight ?? null,
-    gender: (product.gender as (typeof genderEnum)[number]) ?? null,
-    metaTitle: metadata.title ?? "",
-    metaDescription: metadata.description ?? "",
-  };
+  const defaultMarketPricing = React.useMemo<MarketPricingFormValue[]>(
+    () =>
+      DUMMY_MARKETS.map((market) => ({
+        marketId: market.id,
+        marketName: market.name,
+        currency: market.currency,
+        basePrice: null,
+        makingCharges: 0,
+        discountPercentage: 0,
+      })),
+    []
+  );
+
+  const defaultValues = React.useMemo<DefaultValues<ProductFormValues>>(
+    () => ({
+      title: product.title ?? "",
+      description: product.description ?? null,
+      slug: product.slug ?? "",
+      visibility: product.visibility as (typeof visibilityEnum)[number],
+      status: product.status as (typeof productStatusEnum)[number],
+      categoryId: product.categoryId ?? "",
+      material: (product.material as (typeof materialEnum)[number]) ?? null,
+      weight: product.weight ?? null,
+      gender: (product.gender as (typeof genderEnum)[number]) ?? null,
+      metaTitle: metadata.title ?? "",
+      metaDescription: metadata.description ?? "",
+      marketPricing: defaultMarketPricing.map((pricing) => ({ ...pricing })),
+    }),
+    [defaultMarketPricing, metadata.description, metadata.title, product]
+  );
 
   const form = useForm<ProductFormValues>({
-    resolver: zodResolver(productFormSchema),
+    resolver: zodResolver(productFormSchema) as Resolver<ProductFormValues>,
     defaultValues,
   });
 
@@ -225,20 +249,16 @@ export function ProductForm({ product, categories }: ProductFormProps) {
               categories={categories}
               onGenerateSlug={generateSlug}
             />
-
             <MediaSection
               productImages={productImages}
               onImageSelect={handleImageSelect}
             />
-
-            <PricingSection />
-
             <ProductDetailsSection />
+            <PricingSection markets={DUMMY_MARKETS} />
           </div>
 
           <div className="space-y-4">
             <VisibilityStatusSection />
-
             <MetadataSection />
           </div>
         </form>

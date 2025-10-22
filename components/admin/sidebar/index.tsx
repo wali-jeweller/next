@@ -5,13 +5,12 @@ import {
   Globe,
   Home,
   Ruler,
-  Settings2,
   ShoppingBasket,
   Store,
   Tag,
   Tags,
   TicketPercent,
-  TrendingUp,
+  Trash,
   Users2,
 } from "lucide-react";
 import Link from "next/link";
@@ -84,9 +83,9 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Store",
-      url: "/".concat(seedRoute, "/store"),
-      icon: Settings2,
+      title: "Trash",
+      url: "/".concat(seedRoute, "/trash"),
+      icon: Trash,
     },
   ],
 };

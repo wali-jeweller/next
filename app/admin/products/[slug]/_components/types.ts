@@ -6,6 +6,15 @@ import {
   visibilityEnum,
 } from "@/db/schema";
 
+export const marketPricingSchema = z.object({
+  marketId: z.string(),
+  marketName: z.string(),
+  currency: z.string(),
+  basePrice: z.number().min(0).nullable(),
+  makingCharges: z.number().min(0).default(0),
+  discountPercentage: z.number().min(0).max(100).default(0),
+});
+
 export const productFormSchema = z.object({
   title: z
     .string()
@@ -26,9 +35,6 @@ export const productFormSchema = z.object({
   categoryId: z.string(),
   visibility: z.enum(visibilityEnum),
   status: z.enum(productStatusEnum),
-  price: z.number().min(0, "Price must be 0 or more"),
-  discountedPrice: z.number().min(0).nullable(),
-  makingCharges: z.number().min(0).nullable(),
   material: z.enum(materialEnum).nullable(),
   weight: z.number().min(0, "Weight must be positive").nullable(),
   gender: z.enum(genderEnum).nullable(),
@@ -40,6 +46,8 @@ export const productFormSchema = z.object({
     .string()
     .trim()
     .max(160, "Meta description must be at most 160 characters"),
+  marketPricing: z.array(marketPricingSchema),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
+export type MarketPricingFormValue = z.infer<typeof marketPricingSchema>;
