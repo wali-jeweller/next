@@ -523,9 +523,9 @@ export function ProductForm({ product, categories }: ProductFormProps) {
                     Assigned Images ({productImages.length})
                   </p>
                   <div className="grid grid-cols-2 gap-2">
-                    {productImages.map((img) => (
+                    {productImages.map((img, i) => (
                       <div
-                        key={img.id}
+                        key={i}
                         className="relative aspect-square rounded-lg overflow-hidden border"
                       >
                         <img

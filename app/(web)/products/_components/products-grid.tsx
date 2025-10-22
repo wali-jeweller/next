@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { BorderedGrid } from "@/components/web/bordered-grid";
 import { ProductItem } from "@/components/web/product-item";
-import { getProducts, type ProductsQueryParams } from "@/lib/products-api";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 

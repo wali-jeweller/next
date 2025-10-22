@@ -16,7 +16,6 @@ export function ProductCart({
   categorySizes: Array<{ value: string; unit: string }>;
   className?: string;
 }) {
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const { addToCart } = useCart();
 
@@ -24,7 +23,7 @@ export function ProductCart({
 
   const handleAddToCart = async () => {
     // If product has sizes, require size selection
-    if (hasSizes && !selectedSize) {
+    if (hasSizes) {
       return;
     }
 
@@ -49,7 +48,7 @@ export function ProductCart({
   };
 
   // Can add to cart if: no sizes required OR size is selected
-  const canAddToCart = !hasSizes || Boolean(selectedSize);
+  const canAddToCart = !hasSizes;
 
   return (
     <Button
@@ -64,7 +63,7 @@ export function ProductCart({
           <Check className="h-5 w-5" />
           Added to Cart
         </>
-      ) : hasSizes && !selectedSize ? (
+      ) : hasSizes ? (
         "Select Size"
       ) : (
         "Add to Cart"
