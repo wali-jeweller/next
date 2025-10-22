@@ -366,6 +366,22 @@ export const dailyMaterial = pgTable("daily_material_rates", {
   ...timestamps,
 });
 
+export type TUser = typeof users.$inferSelect;
+export type TSession = typeof sessions.$inferSelect;
+export type TAccount = typeof accounts.$inferSelect;
+export type TVerification = typeof verifications.$inferSelect;
+export type TProduct = typeof products.$inferSelect;
+export type TImage = typeof images.$inferSelect;
+export type TCategory = typeof categories.$inferSelect;
+export type TCollection = typeof collections.$inferSelect;
+export type TWishlist = z.infer<typeof wishlistSchema>;
+export type TCart = z.infer<typeof cartSchema>;
+export type TOrder = typeof orders.$inferSelect;
+export type TPromotion = typeof promotions.$inferSelect;
+export type TDailMaterialPrices = typeof dailyMaterial.$inferSelect;
+export type TProductSlugRedirect = typeof productSlugRedirects.$inferSelect;
+export type TBlogPost = typeof blogPosts.$inferSelect;
+
 // —— RELATIONS ——
 
 export const productSchema = createSelectSchema(products);
@@ -383,23 +399,6 @@ export const cartSchema = createSelectSchema(carts)
   .extend({
     items: z.array(productSchema).nullable(),
   });
-
-export type TUser = typeof users.$inferSelect;
-export type TSession = typeof sessions.$inferSelect;
-export type TAccount = typeof accounts.$inferSelect;
-export type TVerification = typeof verifications.$inferSelect;
-export type TProduct = typeof products.$inferSelect;
-export type TImage = typeof images.$inferSelect;
-export type TCategory = typeof categories.$inferSelect;
-export type TCollection = typeof collections.$inferSelect;
-export type TWishlist = z.infer<typeof wishlistSchema>;
-export type TCart = z.infer<typeof cartSchema>;
-export type TOrder = typeof orders.$inferSelect;
-export type TPromotion = typeof promotions.$inferSelect;
-export type TDailMaterialPrices = typeof dailyMaterial.$inferSelect;
-export type TProductSlugRedirect = typeof productSlugRedirects.$inferSelect;
-export type TBlogPost = typeof blogPosts.$inferSelect;
-
 export const usersRelations = relations(users, ({ one, many }) => ({
   cart: one(carts, {
     fields: [users.id],

@@ -48,24 +48,19 @@ export function MediaSection({
       </CardHeader>
       <CardContent className="space-y-4">
         {productImages.length > 0 ? (
-          <div className="space-y-2">
-            <p className="text-sm font-medium">
-              Assigned Images ({productImages.length})
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {productImages.map((img, i) => (
-                <div
-                  key={i}
-                  className="relative aspect-square rounded-lg overflow-hidden border"
-                >
-                  <img
-                    src={img.url}
-                    alt={img.filename}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-              ))}
-            </div>
+          <div className="grid grid-cols-4 gap-2">
+            {productImages.map((img, i) => (
+              <div
+                key={i}
+                className="relative aspect-square rounded-lg overflow-hidden border"
+              >
+                <img
+                  src={img.url}
+                  alt={img.filename}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            ))}
           </div>
         ) : (
           <Empty>

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { db } from "@/db";
 import { auth } from "@/lib/auth";
 import { ProductForm } from "./_components/product-form";
+import { ProductPageHeader } from "./_components/header";
 
 const getProduct = async (slug: string) => {
   "use cache";
@@ -31,7 +32,8 @@ export default async function Page({
   if (!product) notFound();
 
   return (
-    <div className="mx-auto w-full max-w-6xl p-4">
+    <div className="mx-auto w-full max-w-6xl p-4 space-y-2">
+      <ProductPageHeader product={product} />
       <ProductForm product={product} categories={categories} />
     </div>
   );

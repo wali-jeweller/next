@@ -1,14 +1,14 @@
 "use client";
 
 import {
-  Briefcase,
   CreditCard,
+  Globe,
   Home,
-  Layers,
   Ruler,
   Settings2,
   ShoppingBasket,
   Store,
+  Tag,
   Tags,
   TicketPercent,
   TrendingUp,
@@ -46,29 +46,31 @@ const data = {
     {
       title: "Products",
       url: "/".concat(seedRoute, "/products"),
-      icon: Briefcase,
+      icon: Tag,
+      items: [
+        {
+          title: "Collections",
+          url: "/".concat(seedRoute, "/collections"),
+          icon: Tags,
+        },
+        {
+          title: "Sizes",
+          url: "/".concat(seedRoute, "/sizes"),
+          icon: Ruler,
+        },
+        {
+          title: "Markets",
+          url: "/".concat(seedRoute, "/markets"),
+          icon: Globe,
+        },
+        {
+          title: "Material Rates",
+          url: "/".concat(seedRoute, "/materials-rates"),
+          icon: TrendingUp,
+        },
+      ],
+      isActive: true,
     },
-    {
-      title: "Collections",
-      url: "/".concat(seedRoute, "/collections"),
-      icon: Layers,
-    },
-    {
-      title: "Categories",
-      url: "/".concat(seedRoute, "/categories"),
-      icon: Tags,
-    },
-    {
-      title: "Sizes",
-      url: "/".concat(seedRoute, "/sizes"),
-      icon: Ruler,
-    },
-    {
-      title: "Gold Rates",
-      url: "/".concat(seedRoute, "/gold-rates"),
-      icon: TrendingUp,
-    },
-
     {
       title: "Customers",
       url: "/".concat(seedRoute, "/customers"),
