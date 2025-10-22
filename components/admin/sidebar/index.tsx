@@ -63,11 +63,6 @@ const data = {
           url: "/".concat(seedRoute, "/markets"),
           icon: Globe,
         },
-        {
-          title: "Material Rates",
-          url: "/".concat(seedRoute, "/materials-rates"),
-          icon: TrendingUp,
-        },
       ],
       isActive: true,
     },

@@ -154,13 +154,10 @@ export const products = pgTable(
     title: text().notNull(),
     description: text(),
     slug: text().notNull(),
-    price: integer().notNull().default(0),
-    discountedPrice: integer().default(0),
     status: text({ enum: productStatusEnum }).default("new"),
     visibility: text({ enum: visibilityEnum }).default("public"),
     material: text({ enum: materialEnum }).default("other"),
     weight: real(),
-    makingCharges: integer().default(0),
     gender: text({ enum: genderEnum }),
     categoryId: uuid().references(() => categories.id),
     images: jsonb().$type<
@@ -195,6 +192,69 @@ export const products = pgTable(
     index("products_visibility_idx").on(t.visibility),
     index("products_material_idx").on(t.material),
     index("products_gender_idx").on(t.gender),
+  ]
+);
+
+// —— MARKETS ——
+export const markets = pgTable(
+  "markets",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    name: text().notNull(),
+    code: text().notNull(),
+    currency: text().notNull(),
+    region: text().notNull(),
+    isActive: boolean().default(true),
+    ...timestamps,
+  },
+  (t) => [
+    uniqueIndex("markets_code_idx").on(t.code),
+    index("markets_is_active_idx").on(t.isActive),
+  ]
+);
+
+// —— MATERIAL RATES (price per gram per market & material) ——
+export const materialRates = pgTable(
+  "material_rates",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    material: text({ enum: materialEnum }).notNull(),
+    marketId: uuid()
+      .notNull()
+      .references(() => markets.id, { onDelete: "cascade" }),
+    pricePerGram: integer().notNull(),
+    effectiveFrom: timestamp({ withTimezone: true }).notNull().defaultNow(),
+    effectiveTo: timestamp({ withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    index("material_rates_material_idx").on(t.material),
+    index("material_rates_market_id_idx").on(t.marketId),
+    index("material_rates_effective_idx").on(t.effectiveFrom),
+  ]
+);
+
+// —— PRODUCT PRICING (market & currency specific with making charges) ——
+export const productPricing = pgTable(
+  "product_pricing",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    productId: uuid()
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    marketId: uuid()
+      .notNull()
+      .references(() => markets.id, { onDelete: "cascade" }),
+    // Base price override (if not using material-based calculation)
+    basePrice: integer(),
+    makingCharges: integer().notNull().default(0),
+    discountPercentage: real().default(0),
+    ...timestamps,
+  },
+  (t) => [
+    uniqueIndex("product_pricing_unique_idx").on(t.productId, t.marketId),
+    index("product_pricing_product_id_idx").on(t.productId),
+    index("product_pricing_market_id_idx").on(t.marketId),
   ]
 );
 
@@ -381,6 +441,9 @@ export type TPromotion = typeof promotions.$inferSelect;
 export type TDailMaterialPrices = typeof dailyMaterial.$inferSelect;
 export type TProductSlugRedirect = typeof productSlugRedirects.$inferSelect;
 export type TBlogPost = typeof blogPosts.$inferSelect;
+export type TMarket = typeof markets.$inferSelect;
+export type TMaterialRate = typeof materialRates.$inferSelect;
+export type TProductPricing = typeof productPricing.$inferSelect;
 
 // —— RELATIONS ——
 
@@ -472,3 +535,28 @@ export const productSlugRedirectsRelations = relations(
     }),
   })
 );
+
+// —— PRICING RELATIONS ——
+
+export const marketsRelations = relations(markets, ({ many }) => ({
+  materialRates: many(materialRates),
+  productPricing: many(productPricing),
+}));
+
+export const materialRatesRelations = relations(materialRates, ({ one }) => ({
+  market: one(markets, {
+    fields: [materialRates.marketId],
+    references: [markets.id],
+  }),
+}));
+
+export const productPricingRelations = relations(productPricing, ({ one }) => ({
+  product: one(products, {
+    fields: [productPricing.productId],
+    references: [products.id],
+  }),
+  market: one(markets, {
+    fields: [productPricing.marketId],
+    references: [markets.id],
+  }),
+}));
