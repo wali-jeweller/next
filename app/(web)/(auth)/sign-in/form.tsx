@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -30,6 +31,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function SignInForm() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const lastMethod = authClient.getLastUsedLoginMethod();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -145,6 +147,7 @@ export function SignInForm() {
             disabled={form.formState.isSubmitting}
           >
             {form.formState.isSubmitting ? "Signing in..." : "Sign In"}
+            {lastMethod == "email" && <Badge>Last used</Badge>}
           </Button>
         </form>
       </Form>

@@ -2,7 +2,7 @@ import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin, anonymous } from "better-auth/plugins";
+import { admin, anonymous, lastLoginMethod} from "better-auth/plugins";
 
 export const authServer = betterAuth({
   emailAndPassword: {
@@ -30,5 +30,5 @@ export const authServer = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
   },
-  plugins: [anonymous(), admin()],
+  plugins: [anonymous(), admin(), lastLoginMethod()],
 });

@@ -38,6 +38,7 @@ export const users = pgTable(
     banned: boolean().notNull().default(false),
     banReason: text(),
     banExpires: timestamp({ withTimezone: true }),
+    lastLoginMethod: text(),
     ...timestamps,
   },
   (t) => [
